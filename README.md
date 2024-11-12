@@ -25,7 +25,8 @@ docker compose up -d
 go build -o main . && ./main
 ```
 
-Once the server is running it should be accessible at `http://localhost:8080/`
+Once the server is running it should be accessible at on port `8080` in localhost.
+
 ## API Endpoints
 
 The following endpoints are supported:
@@ -68,3 +69,58 @@ This repository includes a `postman.json` file for testing the API endpoints. To
 
 Note: The POST requests include post-response scripts that automatically store the returned ID as a Postman variable. 
 After making a POST request, you can use the "Get Points" request to view the points associated with that ID.
+
+## Testing using curl
+
+Here is the POST request command to the /receipts/process
+
+```bash
+curl --location 'http://localhost:8080/receipts/process' \
+--header 'Content-Type: application/json' \
+--data '{
+  "retailer": "Target",
+  "purchaseDate": "2022-01-01",
+  "purchaseTime": "13:01",
+  "items": [
+    {
+      "shortDescription": "Mountain Dew 12PK",
+      "price": "6.49"
+    },{
+      "shortDescription": "Emils Cheese Pizza",
+      "price": "12.25"
+    },{
+      "shortDescription": "Knorr Creamy Chicken",
+      "price": "1.26"
+    },{
+      "shortDescription": "Doritos Nacho Cheese",
+      "price": "3.35"
+    },{
+      "shortDescription": "   Klarbrunn 12-PK 12 FL OZ  ",
+      "price": "12.00"
+    }
+  ],
+  "total": "35.35"
+}'
+```
+
+Sample response:
+```jquery
+{
+    "id": "b5a2ee27-4985-494f-901d-308ffc742fee"
+}
+```
+
+To get the points make a GET request on the /receipts/{id}/points. Replace the ID with the ID returned from the previous request.
+
+```bash
+curl --location 'http://localhost:8080/receipts/b5a2ee27-4985-494f-901d-308ffc742fee/points'
+```
+
+Sample response:
+```json
+{
+   "points": 28
+}
+```
+
+Note: These curl commands were exported from Postman directly.
